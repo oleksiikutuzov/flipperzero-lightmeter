@@ -1,0 +1,22 @@
+name: Build FAP
+
+on: [pull_request, commit]
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout flipperzero
+      uses: actions/checkout@v3
+      with:
+        repository: flipperdevices/flipperzero-firmware
+        path: flipperzero-firmware
+      
+    - name: Checkout
+      uses: actions/checkout@v3
+      with:
+        path: flipperzer-firmware/applications_user/flipperzero-lightmeter
+        
+    - name: Build
+      run: cd flipperzero-firmware; ./fbt fap_lightmeter
