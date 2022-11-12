@@ -3,8 +3,6 @@ name: Build FAP
 on: 
   pull_request:
   push:
-    branches:
-      - main
 
 jobs:
   build:
@@ -14,10 +12,21 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v3
       with:
-        path: flipperzero-lightmeter
         submodules: 'true'
         
     - name: Build
-      uses: oleksiikutuzov/flipperzero-ufbt-action@v1
+      uses: oleksiikutuzov/flipperzero-ufbt-action@ufbt_to_opt
+        
+  lint:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v3
       with:
-        fap-dir: flipperzero-lightmeter
+        submodules: 'true'
+        
+    - name: Build
+      uses: oleksiikutuzov/flipperzero-ufbt-action@ufbt_to_opt
+      with:
+        lint_only: true
