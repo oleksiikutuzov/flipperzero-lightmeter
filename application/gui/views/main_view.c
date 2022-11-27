@@ -307,7 +307,7 @@ void draw_top_row(Canvas* canvas, MainViewModel* context) {
 
         canvas_set_font(canvas, FontPrimary);
         // metering mode A – ambient, F – flash
-        canvas_draw_str_aligned(canvas, 1, 1, AlignLeft, AlignTop, "A");
+        // canvas_draw_str_aligned(canvas, 1, 1, AlignLeft, AlignTop, "A");
 
         snprintf(str, sizeof(str), "ISO: %d", iso_numbers[model->iso]);
         canvas_draw_str_aligned(canvas, 19, 1, AlignLeft, AlignTop, str);
