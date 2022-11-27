@@ -10,6 +10,7 @@
 #define DEFAULT_APERTURE AP_2_8
 #define DEFAULT_SPEED SPEED_125
 #define DEFAULT_DOME WITHOUT_DOME
+#define DEFAULT_BACKLIGHT BACKLIGHT_AUTO
 
 typedef enum {
     ISO_6,
@@ -97,3 +98,5 @@ typedef enum {
     WITHOUT_DOME,
     WITH_DOME,
 } LightMeterDomePresence;
+
+typedef enum { BACKLIGHT_AUTO, BACKLIGHT_ON } LightMeterBacklight;
