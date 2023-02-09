@@ -39,6 +39,7 @@ LightMeterApp* lightmeter_app_alloc(uint32_t first_scene) {
     app->config->aperture = DEFAULT_APERTURE;
     app->config->dome = DEFAULT_DOME;
     app->config->backlight = DEFAULT_BACKLIGHT;
+    app->config->measurement_resolution = HIGH_RES;
 
     // Records
     app->gui = furi_record_open(RECORD_GUI);

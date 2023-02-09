@@ -28,6 +28,7 @@ typedef struct {
     int speed;
     bool dome;
     bool lux_only;
+    int measurement_resolution;
 } MainViewModel;
 
 typedef void (*LightMeterMainViewButtonCallback)(void* context);
@@ -60,6 +61,8 @@ void main_view_set_speed(MainView* main_view, int val);
 void main_view_set_dome(MainView* main_view, bool val);
 
 void main_view_set_lux_only(MainView* main_view, bool val);
+
+void main_view_set_measurement_resolution(MainView* main_view, int val);
 
 bool main_view_get_dome(MainView* main_view);
 

@@ -104,4 +104,10 @@ typedef enum {
     LUX_ONLY_ON,
 } LightMeterLuxOnlyMode;
 
+typedef enum {
+    LOW_RES,
+    HIGH_RES,
+    HIGH_RES2
+} LightMeterMeterMode;
+
 typedef enum { BACKLIGHT_AUTO, BACKLIGHT_ON } LightMeterBacklight;

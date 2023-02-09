@@ -51,12 +51,19 @@ static const char* lux_only[] = {
     [LUX_ONLY_ON] = "On",
 };
 
+static const char* measurement_resolution[] = {
+    [LOW_RES] = "Low",
+    [HIGH_RES] = "High",
+    [HIGH_RES2] = "High2",
+};
+
 enum LightMeterSubmenuIndex {
     LightMeterSubmenuIndexISO,
     LightMeterSubmenuIndexND,
     LightMeterSubmenuIndexDome,
     LightMeterSubmenuIndexBacklight,
     LightMeterSubmenuIndexLuxMeter,
+    LightMeterSubmenuIndexMeasurementResolution,
     LightMeterSubmenuIndexHelp,
     LightMeterSubmenuIndexAbout,
 };
@@ -127,6 +134,17 @@ static void lux_only_cb(VariableItem* item) {
     lightmeter_app_set_config(app, config);
 }
 
+static void measurement_resolution_cb(VariableItem* item) {
+    LightMeterApp* app = variable_item_get_context(item);
+    uint8_t index = variable_item_get_current_value_index(item);
+
+    variable_item_set_current_value_text(item, measurement_resolution[index]);
+
+    LightMeterConfig* config = app->config;
+    config->measurement_resolution = index;
+    lightmeter_app_set_config(app, config);
+}
+
 static void ok_cb(void* context, uint32_t index) {
     LightMeterApp* app = context;
     UNUSED(app);
@@ -173,6 +191,11 @@ void lightmeter_scene_config_on_enter(void* context) {
     variable_item_set_current_value_index(item, config->lux_only);
     variable_item_set_current_value_text(item, lux_only[config->lux_only]);
 
+    item = variable_item_list_add(
+        var_item_list, "Resolution", COUNT_OF(measurement_resolution), measurement_resolution_cb, app);
+    variable_item_set_current_value_index(item, config->measurement_resolution);
+    variable_item_set_current_value_text(item, measurement_resolution[config->measurement_resolution]);
+
     item = variable_item_list_add(var_item_list, "Help and Pinout", 0, NULL, NULL);
     item = variable_item_list_add(var_item_list, "About", 0, NULL, NULL);
 
@@ -213,4 +236,5 @@ void lightmeter_scene_config_on_exit(void* context) {
     main_view_set_nd(app->main_view, app->config->nd);
     main_view_set_dome(app->main_view, app->config->dome);
     main_view_set_lux_only(app->main_view, app->config->lux_only);
+    main_view_set_measurement_resolution(app->main_view, app->config->measurement_resolution);
 }

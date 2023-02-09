@@ -275,6 +275,24 @@ void main_view_set_lux_only(MainView* main_view, bool lux_only) {
         main_view->view, MainViewModel * model, { model->lux_only = lux_only; }, true);
 }
 
+void main_view_set_measurement_resolution(MainView* main_view, int measurement_resolution) {
+    furi_assert(main_view);
+    with_view_model(
+        main_view->view, MainViewModel * model, { model->measurement_resolution = measurement_resolution; }, true);
+    
+    switch (measurement_resolution) {
+        case LOW_RES:
+            bh1750_set_mode(ONETIME_LOW_RES_MODE);
+            break;
+        case HIGH_RES:
+            bh1750_set_mode(ONETIME_HIGH_RES_MODE);
+            break;
+        case HIGH_RES2:
+            bh1750_set_mode(ONETIME_HIGH_RES_MODE_2);
+            break;
+    }
+}
+
 bool main_view_get_dome(MainView* main_view) {
     furi_assert(main_view);
     bool val = false;
