@@ -17,6 +17,7 @@ typedef struct {
     uint8_t recv[2];
     MainViewMode current_mode;
     float lux;
+    float peakLux;
     float EV;
     float aperture_val;
     float speed_val;
@@ -38,6 +39,11 @@ void lightmeter_main_view_set_left_callback(
     LightMeterMainViewButtonCallback callback,
     void* context);
 
+void lightmeter_main_view_set_right_callback(
+    MainView* lightmeter_main_view,
+    LightMeterMainViewButtonCallback callback,
+    void* context);
+
 MainView* main_view_alloc();
 
 void main_view_free(MainView* main_view);
@@ -45,6 +51,8 @@ void main_view_free(MainView* main_view);
 View* main_view_get_view(MainView* main_view);
 
 void main_view_set_lux(MainView* main_view, float val);
+
+void main_view_reset_lux(MainView* main_view);
 
 void main_view_set_EV(MainView* main_view_, float val);
 

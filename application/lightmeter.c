@@ -40,6 +40,7 @@ LightMeterApp* lightmeter_app_alloc(uint32_t first_scene) {
     app->config->dome = DEFAULT_DOME;
     app->config->backlight = DEFAULT_BACKLIGHT;
     app->config->measurement_resolution = HIGH_RES;
+    app->config->lux_only = LUX_ONLY_ON;
 
     // Records
     app->gui = furi_record_open(RECORD_GUI);
@@ -159,4 +160,10 @@ void lightmeter_app_i2c_callback(LightMeterApp* context) {
     main_view_set_lux(app->main_view, lux);
     main_view_set_EV(app->main_view, EV);
     main_view_set_response(app->main_view, response);
+}
+
+void lightmeter_app_reset_callback(LightMeterApp* context){
+    LightMeterApp* app = context;
+    
+    main_view_reset_lux(app->main_view);
 }

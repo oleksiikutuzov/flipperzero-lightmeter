@@ -49,6 +49,7 @@ typedef enum {
 } LightMeterAppView;
 
 typedef enum {
+    LightMeterAppCustomEventReset,
     LightMeterAppCustomEventConfig,
     LightMeterAppCustomEventHelp,
     LightMeterAppCustomEventAbout,
@@ -57,3 +58,5 @@ typedef enum {
 void lightmeter_app_set_config(LightMeterApp* context, LightMeterConfig* config);
 
 void lightmeter_app_i2c_callback(LightMeterApp* context);
+
+void lightmeter_app_reset_callback(LightMeterApp* context);

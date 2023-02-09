@@ -72,6 +72,7 @@ const float speed_numbers[] = {
 struct MainView {
     View* view;
     LightMeterMainViewButtonCallback cb_left;
+    LightMeterMainViewButtonCallback cb_right;
     void* cb_context;
 };
 
@@ -90,6 +91,21 @@ void lightmeter_main_view_set_left_callback(
         true);
 }
 
+void lightmeter_main_view_set_right_callback(
+    MainView* lightmeter_main_view,
+    LightMeterMainViewButtonCallback callback,
+    void* context) {
+    with_view_model(
+        lightmeter_main_view->view,
+        MainViewModel * model,
+        {
+            UNUSED(model);
+            lightmeter_main_view->cb_right = callback;
+            lightmeter_main_view->cb_context = context;
+        },
+        true);
+}
+
 static void main_view_draw_callback(Canvas* canvas, void* context) {
     furi_assert(context);
     MainViewModel* model = context;
@@ -99,6 +115,7 @@ static void main_view_draw_callback(Canvas* canvas, void* context) {
     // draw button
     canvas_set_font(canvas, FontSecondary);
     elements_button_left(canvas, "Config");
+    elements_button_right(canvas, "Reset");
 
     if(!model->lux_only) {
         // top row
@@ -190,6 +207,11 @@ static bool main_view_input_callback(InputEvent* event, void* context) {
             main_view->cb_left(main_view->cb_context);
         }
         consumed = true;
+    } else if(event->type == InputTypeShort && event->key == InputKeyRight) {
+        if(main_view->cb_right) {
+            main_view->cb_right(main_view->cb_context);
+        }
+        consumed = true;
     } else if(event->type == InputTypeShort && event->key == InputKeyBack) {
     } else {
         main_view_process(main_view, event);
@@ -224,8 +246,20 @@ View* main_view_get_view(MainView* main_view) {
 void main_view_set_lux(MainView* main_view, float val) {
     furi_assert(main_view);
     with_view_model(
-        main_view->view, MainViewModel * model, { model->lux = val; }, true);
+        main_view->view, MainViewModel * model, { 
+            model->lux = val; 
+            model->peakLux = fmax(model->peakLux, val); 
+        }, true);
 }
+
+void main_view_reset_lux(MainView* main_view) {
+    furi_assert(main_view);
+    with_view_model(
+        main_view->view, MainViewModel * model, { 
+            model->peakLux = 0; 
+        }, true);
+}
+
 
 void main_view_set_EV(MainView* main_view, float val) {
     furi_assert(main_view);
@@ -480,9 +514,17 @@ void draw_lux_only_mode(Canvas* canvas, MainViewModel* context) {
 
         canvas_set_font(canvas, FontBigNumbers);
         snprintf(str, sizeof(str), "%.0f", (double)model->lux);
-        canvas_draw_str_aligned(canvas, 80, 32, AlignRight, AlignCenter, str);
+        canvas_draw_str_aligned(canvas, 80, 22, AlignRight, AlignCenter, str);
 
         canvas_set_font(canvas, FontSecondary);
-        canvas_draw_str_aligned(canvas, 85, 39, AlignLeft, AlignBottom, "Lux");
+        canvas_draw_str_aligned(canvas, 85, 29, AlignLeft, AlignBottom, "Lux now");
+
+        canvas_set_font(canvas, FontPrimary);
+        snprintf(str, sizeof(str), "%.0f", (double)model->peakLux);
+        canvas_draw_str_aligned(canvas, 80, 39, AlignRight, AlignCenter, str);
+
+        canvas_set_font(canvas, FontSecondary);
+        canvas_draw_str_aligned(canvas, 85, 43, AlignLeft, AlignBottom, "Lux peak");
+
     }
 }
