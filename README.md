@@ -30,6 +30,7 @@ SDA -> C1
 
 ## TODO
 - [ ] Save settings to sd card
+- [ ] support different I2C addresses
 
 ## References
 App inspired by [lightmeter](https://github.com/vpominchuk/lightmeter) project for Arduino by [vpominchuk](https://github.com/vpominchuk).
