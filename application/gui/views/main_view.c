@@ -1,4 +1,5 @@
 #include "main_view.h"
+#include <math.h>
 #include <furi.h>
 #include <furi_hal.h>
 #include <gui/elements.h>
@@ -249,6 +250,9 @@ void main_view_set_lux(MainView* main_view, float val) {
         main_view->view, MainViewModel * model, { 
             model->lux = val; 
             model->peakLux = fmax(model->peakLux, val); 
+            
+            model->luxHistogram[ model->luxHistogramIndex++ ] = val;
+            model->luxHistogramIndex %= LUX_HISTORGRAM_LENGTH;
         }, true);
 }
 
@@ -525,6 +529,15 @@ void draw_lux_only_mode(Canvas* canvas, MainViewModel* context) {
 
         canvas_set_font(canvas, FontSecondary);
         canvas_draw_str_aligned(canvas, 85, 43, AlignLeft, AlignBottom, "Lux peak");
+
+        for (int i=0; i<LUX_HISTORGRAM_LENGTH; i++){
+            float lux = model->luxHistogram[ 
+                (i + model->luxHistogramIndex) % LUX_HISTORGRAM_LENGTH ]; 
+            int barHeight = log10(lux) / log10(LUX_HISTORGRAM_LOGBASE);
+            canvas_draw_line(canvas, 
+                LUX_HISTORGRAM_LEFT + i, LUX_HISTORGRAM_BOTTOM, 
+                LUX_HISTORGRAM_LEFT + i, LUX_HISTORGRAM_BOTTOM - barHeight);
+        }
 
     }
 }

@@ -4,6 +4,19 @@
 #include "lightmeter_icons.h"
 #include "../../lightmeter_config.h"
 
+/* log base 1.4 and 12 pixels cut off 
+   makes it show values approx 65-65k
+   with reasonable resolution in 1-10k range
+   on 20px of screen height  */
+#define LUX_HISTORGRAM_LOGBASE 1.4
+#define LUX_HISTORGRAM_BOTTOM 64+12
+
+/* 40 pixels between 45th and 85th 
+   between left and right button labels */
+#define LUX_HISTORGRAM_LEFT 45
+#define LUX_HISTORGRAM_LENGTH 40
+
+
 typedef struct MainView MainView;
 
 typedef enum {
@@ -30,6 +43,9 @@ typedef struct {
     bool dome;
     bool lux_only;
     int measurement_resolution;
+
+    float luxHistogram[LUX_HISTORGRAM_LENGTH];
+    int luxHistogramIndex;
 } MainViewModel;
 
 typedef void (*LightMeterMainViewButtonCallback)(void* context);
