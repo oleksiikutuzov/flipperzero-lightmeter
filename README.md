@@ -29,7 +29,7 @@ SDA -> C1
 
 
 ## TODO
-- [ ] Save settings to sd card
+- [x] Save settings to sd card
 - [ ] support different I2C addresses
 
 ## References

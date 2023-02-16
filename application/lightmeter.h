@@ -3,6 +3,9 @@
 #include <furi.h>
 #include <furi_hal.h>
 
+#include <stream/stream.h>
+#include <flipper_format/flipper_format_i.h>
+
 #include <gui/gui.h>
 #include <gui/view.h>
 #include <gui/view_dispatcher.h>
@@ -19,14 +22,19 @@
 #include "lightmeter_config.h"
 #include <BH1750.h>
 
+#define APP_PATH_DIR "/ext/lightmeter"
+#define APP_PATH_CFG "config.txt"
+
 typedef struct {
-    int iso;
-    int nd;
-    int aperture;
-    int dome;
-    int backlight;
-    int lux_only;
-    int measurement_resolution;
+    uint8_t iso;
+    uint8_t nd;
+    uint8_t aperture;
+    uint8_t dome;
+    uint8_t backlight;
+    uint8_t lux_only;
+    uint8_t measurement_resolution;
+    // uint8_t needed to use flipper_format_write_hex
+    // int32_t coupled with flipper_format_write_int32 makes stack overflow for unknown reason
 } LightMeterConfig;
 
 typedef struct {
@@ -38,6 +46,9 @@ typedef struct {
     LightMeterConfig* config;
     NotificationApp* notifications;
     Widget* widget;
+
+    Storage* storage;
+    FuriString* cfg_path;
 } LightMeterApp;
 
 typedef enum {
