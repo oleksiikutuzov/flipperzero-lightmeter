@@ -27,11 +27,6 @@ static void lightmeter_tick_event_callback(void* context) {
 LightMeterApp* lightmeter_app_alloc(uint32_t first_scene) {
     LightMeterApp* app = malloc(sizeof(LightMeterApp));
 
-    // Sensor
-    bh1750_set_power_state(1);
-    bh1750_init();
-    bh1750_set_mode(ONETIME_HIGH_RES_MODE);
-
     // Set default values to config
     app->config = malloc(sizeof(LightMeterConfig));
     app->config->iso = DEFAULT_ISO;
@@ -61,6 +56,25 @@ LightMeterApp* lightmeter_app_alloc(uint32_t first_scene) {
         flipper_format_read_int32(cfg_fmt, "lux_only", &app->config->lux_only, 1);
     }
     flipper_format_free(cfg_fmt);
+
+    // Sensor
+    bh1750_set_power_state(1);
+    bh1750_init();
+
+    switch(app->config->measurement_resolution) {
+    case LOW_RES:
+        bh1750_set_mode(ONETIME_HIGH_RES_MODE);
+        break;
+    case HIGH_RES:
+        bh1750_set_mode(ONETIME_HIGH_RES_MODE);
+        break;
+    case HIGH_RES2:
+        bh1750_set_mode(ONETIME_HIGH_RES_MODE_2);
+        break;
+    default:
+        bh1750_set_mode(ONETIME_HIGH_RES_MODE);
+        break;
+    }
 
     // View dispatcher
     app->view_dispatcher = view_dispatcher_alloc();
