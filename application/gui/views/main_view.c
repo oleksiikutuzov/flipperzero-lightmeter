@@ -116,7 +116,6 @@ static void main_view_draw_callback(Canvas* canvas, void* context) {
     // draw button
     canvas_set_font(canvas, FontSecondary);
     elements_button_left(canvas, "Config");
-    elements_button_right(canvas, "Reset");
 
     if(!model->lux_only) {
         // top row
@@ -143,6 +142,7 @@ static void main_view_draw_callback(Canvas* canvas, void* context) {
         // draw mode indicator
         draw_mode_indicator(canvas, model);
     } else {
+        elements_button_right(canvas, "Reset");
         draw_lux_only_mode(canvas, model);
     }
 }

@@ -22,7 +22,7 @@
 #include "lightmeter_config.h"
 #include <BH1750.h>
 
-#define APP_PATH_DIR "/ext/lightmeter"
+#define APP_PATH_DIR "/ext/apps_data/lightmeter"
 #define APP_PATH_CFG "config.txt"
 
 typedef struct {
