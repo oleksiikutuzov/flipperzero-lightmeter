@@ -42,7 +42,6 @@ LightMeterApp* lightmeter_app_alloc(uint32_t first_scene) {
     app->config->measurement_resolution = HIGH_RES;
     app->config->lux_only = LUX_ONLY_OFF;
 
-
     // Records
     app->gui = furi_record_open(RECORD_GUI);
     app->storage = furi_record_open(RECORD_STORAGE);
@@ -52,17 +51,16 @@ LightMeterApp* lightmeter_app_alloc(uint32_t first_scene) {
     furi_string_printf(app->cfg_path, "%s/%s", APP_PATH_DIR, APP_PATH_CFG);
 
     FlipperFormat* cfg_fmt = flipper_format_file_alloc(app->storage);
-    if (flipper_format_file_open_existing(cfg_fmt, furi_string_get_cstr(app->cfg_path))) {
-        flipper_format_read_hex(cfg_fmt, "iso", &app->config->iso, 1);
-        flipper_format_read_hex(cfg_fmt, "nd", &app->config->nd, 1);
-        flipper_format_read_hex(cfg_fmt, "aperture", &app->config->aperture, 1);
-        flipper_format_read_hex(cfg_fmt, "dome", &app->config->dome, 1);
-        flipper_format_read_hex(cfg_fmt, "backlight", &app->config->backlight, 1);
-        flipper_format_read_hex(cfg_fmt, "measurement_resolution", &app->config->measurement_resolution, 1);
-        flipper_format_read_hex(cfg_fmt, "lux_only", &app->config->lux_only, 1);
+    if(flipper_format_file_open_existing(cfg_fmt, furi_string_get_cstr(app->cfg_path))) {
+        flipper_format_read_int32(cfg_fmt, "iso", &app->config->iso, 1);
+        flipper_format_read_int32(cfg_fmt, "aperture", &app->config->aperture, 1);
+        flipper_format_read_int32(cfg_fmt, "dome", &app->config->dome, 1);
+        flipper_format_read_int32(cfg_fmt, "backlight", &app->config->backlight, 1);
+        flipper_format_read_int32(
+            cfg_fmt, "measurement_resolution", &app->config->measurement_resolution, 1);
+        flipper_format_read_int32(cfg_fmt, "lux_only", &app->config->lux_only, 1);
     }
     flipper_format_free(cfg_fmt);
-
 
     // View dispatcher
     app->view_dispatcher = view_dispatcher_alloc();
@@ -160,16 +158,17 @@ void lightmeter_app_set_config(LightMeterApp* context, LightMeterConfig* config)
     storage_common_mkdir(app->storage, APP_PATH_DIR);
 
     FlipperFormat* cfg_fmt = flipper_format_file_alloc(app->storage);
-    if (flipper_format_file_open_always(cfg_fmt, furi_string_get_cstr(app->cfg_path))) {
+    if(flipper_format_file_open_always(cfg_fmt, furi_string_get_cstr(app->cfg_path))) {
         flipper_format_write_header_cstr(cfg_fmt, "lightmeter", 1);
 
-        flipper_format_write_hex(cfg_fmt, "iso", &(app->config->iso), 1);
-        flipper_format_write_hex(cfg_fmt, "nd", &(app->config->nd), 1);
-        flipper_format_write_hex(cfg_fmt, "aperture", &(app->config->aperture), 1);
-        flipper_format_write_hex(cfg_fmt, "dome", &(app->config->dome), 1);
-        flipper_format_write_hex(cfg_fmt, "backlight", &(app->config->backlight), 1);
-        flipper_format_write_hex(cfg_fmt, "measurement_resolution", &(app->config->measurement_resolution), 1);
-        flipper_format_write_hex(cfg_fmt, "lux_only", &(app->config->lux_only), 1);
+        flipper_format_write_int32(cfg_fmt, "iso", &(app->config->iso), 1);
+        flipper_format_write_int32(cfg_fmt, "nd", &(app->config->nd), 1);
+        flipper_format_write_int32(cfg_fmt, "aperture", &(app->config->aperture), 1);
+        flipper_format_write_int32(cfg_fmt, "dome", &(app->config->dome), 1);
+        flipper_format_write_int32(cfg_fmt, "backlight", &(app->config->backlight), 1);
+        flipper_format_write_int32(
+            cfg_fmt, "measurement_resolution", &(app->config->measurement_resolution), 1);
+        flipper_format_write_int32(cfg_fmt, "lux_only", &(app->config->lux_only), 1);
     }
     flipper_format_free(cfg_fmt);
 }
@@ -196,8 +195,8 @@ void lightmeter_app_i2c_callback(LightMeterApp* context) {
     main_view_set_response(app->main_view, response);
 }
 
-void lightmeter_app_reset_callback(LightMeterApp* context){
+void lightmeter_app_reset_callback(LightMeterApp* context) {
     LightMeterApp* app = context;
-    
+
     main_view_reset_lux(app->main_view);
 }

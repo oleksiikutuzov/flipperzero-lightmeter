@@ -26,15 +26,13 @@
 #define APP_PATH_CFG "config.txt"
 
 typedef struct {
-    uint8_t iso;
-    uint8_t nd;
-    uint8_t aperture;
-    uint8_t dome;
-    uint8_t backlight;
-    uint8_t lux_only;
-    uint8_t measurement_resolution;
-    // uint8_t needed to use flipper_format_write_hex
-    // int32_t coupled with flipper_format_write_int32 makes stack overflow for unknown reason
+    int32_t iso;
+    int32_t nd;
+    int32_t aperture;
+    int32_t dome;
+    int32_t backlight;
+    int32_t lux_only;
+    int32_t measurement_resolution;
 } LightMeterConfig;
 
 typedef struct {
