@@ -317,18 +317,12 @@ void main_view_set_measurement_resolution(MainView* main_view, int measurement_r
     furi_assert(main_view);
     with_view_model(
         main_view->view, MainViewModel * model, { model->measurement_resolution = measurement_resolution; }, true);
-    
-    switch (measurement_resolution) {
-        case LOW_RES:
-            bh1750_set_mode(ONETIME_LOW_RES_MODE);
-            break;
-        case HIGH_RES:
-            bh1750_set_mode(ONETIME_HIGH_RES_MODE);
-            break;
-        case HIGH_RES2:
-            bh1750_set_mode(ONETIME_HIGH_RES_MODE_2);
-            break;
-    }
+}
+
+void main_view_set_device_addr(MainView* main_view, int device_addr) {
+    furi_assert(main_view);
+    with_view_model(
+        main_view->view, MainViewModel * model, { model->device_addr = device_addr; }, true);
 }
 
 bool main_view_get_dome(MainView* main_view) {

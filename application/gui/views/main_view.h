@@ -42,6 +42,7 @@ typedef struct {
     bool dome;
     bool lux_only;
     int measurement_resolution;
+    int device_addr;
 
     float luxHistogram[LUX_HISTORGRAM_LENGTH];
     int luxHistogramIndex;
@@ -86,6 +87,8 @@ void main_view_set_dome(MainView* main_view, bool val);
 void main_view_set_lux_only(MainView* main_view, bool val);
 
 void main_view_set_measurement_resolution(MainView* main_view, int val);
+
+void main_view_set_device_addr(MainView* main_view, int addr);
 
 bool main_view_get_dome(MainView* main_view);
 

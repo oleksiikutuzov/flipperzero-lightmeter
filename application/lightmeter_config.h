@@ -109,5 +109,9 @@ typedef enum {
     HIGH_RES,
     HIGH_RES2
 } LightMeterMeterMode;
+typedef enum {
+    ADDR_LOW,
+    ADDR_HIGH
+} LightMeterMeterAddr;
 
 typedef enum { BACKLIGHT_AUTO, BACKLIGHT_ON } LightMeterBacklight;

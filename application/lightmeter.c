@@ -35,6 +35,7 @@ LightMeterApp* lightmeter_app_alloc(uint32_t first_scene) {
     app->config->dome = DEFAULT_DOME;
     app->config->backlight = DEFAULT_BACKLIGHT;
     app->config->measurement_resolution = HIGH_RES;
+    app->config->device_addr = ADDR_LOW;
     app->config->lux_only = LUX_ONLY_OFF;
 
     // Records
@@ -51,30 +52,14 @@ LightMeterApp* lightmeter_app_alloc(uint32_t first_scene) {
         flipper_format_read_int32(cfg_fmt, "aperture", &app->config->aperture, 1);
         flipper_format_read_int32(cfg_fmt, "dome", &app->config->dome, 1);
         flipper_format_read_int32(cfg_fmt, "backlight", &app->config->backlight, 1);
-        flipper_format_read_int32(
-            cfg_fmt, "measurement_resolution", &app->config->measurement_resolution, 1);
+        flipper_format_read_int32(cfg_fmt, "measurement_resolution", &app->config->measurement_resolution, 1);
         flipper_format_read_int32(cfg_fmt, "lux_only", &app->config->lux_only, 1);
+        flipper_format_read_int32(cfg_fmt, "device_addr", &app->config->device_addr, 1);        
     }
     flipper_format_free(cfg_fmt);
 
     // Sensor
-    bh1750_set_power_state(1);
-    bh1750_init();
-
-    switch(app->config->measurement_resolution) {
-    case LOW_RES:
-        bh1750_set_mode(ONETIME_HIGH_RES_MODE);
-        break;
-    case HIGH_RES:
-        bh1750_set_mode(ONETIME_HIGH_RES_MODE);
-        break;
-    case HIGH_RES2:
-        bh1750_set_mode(ONETIME_HIGH_RES_MODE_2);
-        break;
-    default:
-        bh1750_set_mode(ONETIME_HIGH_RES_MODE);
-        break;
-    }
+    lightmeter_app_i2c_init(app);
 
     // View dispatcher
     app->view_dispatcher = view_dispatcher_alloc();
@@ -180,11 +165,43 @@ void lightmeter_app_set_config(LightMeterApp* context, LightMeterConfig* config)
         flipper_format_write_int32(cfg_fmt, "aperture", &(app->config->aperture), 1);
         flipper_format_write_int32(cfg_fmt, "dome", &(app->config->dome), 1);
         flipper_format_write_int32(cfg_fmt, "backlight", &(app->config->backlight), 1);
-        flipper_format_write_int32(
-            cfg_fmt, "measurement_resolution", &(app->config->measurement_resolution), 1);
+        flipper_format_write_int32(cfg_fmt, "measurement_resolution", &(app->config->measurement_resolution), 1);
         flipper_format_write_int32(cfg_fmt, "lux_only", &(app->config->lux_only), 1);
+        flipper_format_write_int32(cfg_fmt, "device_addr", &(app->config->device_addr), 1);
     }
     flipper_format_free(cfg_fmt);
+}
+
+void lightmeter_app_i2c_init(LightMeterApp* context) {
+    LightMeterApp* app = context;
+
+    bh1750_set_power_state(1);
+    switch(app->config->device_addr) {
+        case ADDR_HIGH:
+            bh1750_init_with_addr(0x5C);
+            break;
+        case ADDR_LOW:
+            bh1750_init_with_addr(0x23);
+            break;
+        default:
+            bh1750_init_with_addr(0x23);
+            break;
+    }
+
+    switch(app->config->measurement_resolution) {
+        case LOW_RES:
+            bh1750_set_mode(ONETIME_HIGH_RES_MODE);
+            break;
+        case HIGH_RES:
+            bh1750_set_mode(ONETIME_HIGH_RES_MODE);
+            break;
+        case HIGH_RES2:
+            bh1750_set_mode(ONETIME_HIGH_RES_MODE_2);
+            break;
+        default:
+            bh1750_set_mode(ONETIME_HIGH_RES_MODE);
+            break;
+    }
 }
 
 void lightmeter_app_i2c_callback(LightMeterApp* context) {

@@ -33,6 +33,7 @@ typedef struct {
     int32_t backlight;
     int32_t lux_only;
     int32_t measurement_resolution;
+    int32_t device_addr;
 } LightMeterConfig;
 
 typedef struct {
@@ -65,6 +66,8 @@ typedef enum {
 } LightMeterAppCustomEvent;
 
 void lightmeter_app_set_config(LightMeterApp* context, LightMeterConfig* config);
+
+void lightmeter_app_i2c_init(LightMeterApp* context);
 
 void lightmeter_app_i2c_callback(LightMeterApp* context);
 
