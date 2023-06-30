@@ -13,6 +13,7 @@ jobs:
         with:
           # Set to 'release' to build for latest published release version
           sdk-channel: dev
+          app-dir: application
       - name: Upload app artifacts
         uses: actions/upload-artifact@v3
         with:
@@ -25,3 +26,4 @@ jobs:
           # skip SDK setup, we already did it in previous step
           skip-setup: true
           task: lint
+          app-dir: application
