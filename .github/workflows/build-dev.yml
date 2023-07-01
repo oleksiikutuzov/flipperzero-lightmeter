@@ -3,7 +3,7 @@ on: [push]
 jobs:
   ufbt-build-action:
     runs-on: ubuntu-latest
-    name: "ufbt: Build for Release branch"
+    name: "ufbt: Build for dev branch"
     steps:
       - name: Checkout
         uses: actions/checkout@v3
