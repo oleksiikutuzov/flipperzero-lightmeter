@@ -135,6 +135,8 @@ void lightmeter_app_free(LightMeterApp* app) {
     furi_record_close(RECORD_STORAGE);
     furi_record_close(RECORD_NOTIFICATION);
 
+    bh1750_set_power_state(0);
+
     free(app->config);
     free(app);
 }
@@ -202,38 +204,6 @@ void lightmeter_app_i2c_init(LightMeterApp* context) {
     }
 }
 
-void lightmeter_app_i2c_init_sensor(LightMeterApp* context) {
-    LightMeterApp* app = context;
-    switch(app->config->sensor_type) {
-    case SENSOR_BH1750:
-        bh1750_set_power_state(1);
-        bh1750_init();
-        bh1750_set_mode(ONETIME_HIGH_RES_MODE);
-        break;
-    case SENSOR_MAX44009:
-        max44009_init();
-        break;
-    default:
-        FURI_LOG_E(TAG, "Invalid sensor type %d", app->config->sensor_type);
-        return;
-    }
-}
-
-void lightmeter_app_i2c_deinit_sensor(LightMeterApp* context) {
-    LightMeterApp* app = context;
-    switch(app->config->sensor_type) {
-    case SENSOR_BH1750:
-        bh1750_set_power_state(0);
-        break;
-    case SENSOR_MAX44009:
-        // nothing
-        break;
-    default:
-        FURI_LOG_E(TAG, "Invalid sensor type %d", app->config->sensor_type);
-        return;
-    }
-}
-
 void lightmeter_app_i2c_callback(LightMeterApp* context) {
     LightMeterApp* app = context;
 
@@ -241,17 +211,15 @@ void lightmeter_app_i2c_callback(LightMeterApp* context) {
     float lux = 0;
     bool response = 0;
 
-    if(app->config->sensor_type == SENSOR_BH1750) {
-        if(bh1750_trigger_manual_conversion() == BH1750_OK) {
-            bh1750_read_light(&lux);
-            response = 1;
-        }
-    } else if(app->config->sensor_type == SENSOR_MAX44009) {
-        if(max44009_read_light(&lux)) response = 1;
-    }
+    if(bh1750_trigger_manual_conversion() == BH1750_OK) response = 1;
 
-    if(main_view_get_dome(app->main_view)) lux *= DOME_COEFFICIENT;
-    EV = lux2ev(lux);
+    if(response) {
+        bh1750_read_light(&lux);
+
+        if(main_view_get_dome(app->main_view)) lux *= DOME_COEFFICIENT;
+
+        EV = lux2ev(lux);
+    }
 
     main_view_set_lux(app->main_view, lux);
     main_view_set_EV(app->main_view, EV);
