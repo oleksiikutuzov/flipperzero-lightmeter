@@ -22,6 +22,8 @@ void lightmeter_scene_main_on_enter(void* context) {
     main_view_set_lux_only(app->main_view, app->config->lux_only);
     main_view_set_measurement_resolution(app->main_view, app->config->measurement_resolution);
 
+    lightmeter_app_i2c_init_sensor(context);
+  
     lightmeter_main_view_set_left_callback(app->main_view, lightmeter_scene_main_on_left, app);
     lightmeter_main_view_set_right_callback(app->main_view, lightmeter_scene_main_on_right, app);
     view_dispatcher_switch_to_view(app->view_dispatcher, LightMeterAppViewMainView);
@@ -56,5 +58,5 @@ bool lightmeter_scene_main_on_event(void* context, SceneManagerEvent event) {
 }
 
 void lightmeter_scene_main_on_exit(void* context) {
-    UNUSED(context);
+    lightmeter_app_i2c_deinit_sensor(context);
 }
