@@ -1,5 +1,6 @@
 ## v1.2
 
+* Lux only screen now has statistics (thanks to @danielskowronski)
 * Settings are now stored on SD card (thanks to @danielskowronski)
 * You can choose the resolution and address for sensor (thanks to @danielskowronski)
 
