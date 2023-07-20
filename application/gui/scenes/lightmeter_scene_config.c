@@ -51,6 +51,11 @@ static const char* lux_only[] = {
     [LUX_ONLY_ON] = "On",
 };
 
+static const char* sensor_type[] = {
+    [SENSOR_BH1750] = "BH1750",
+    [SENSOR_MAX44009] = "MAX44009",
+};
+
 static const char* measurement_resolution[] = {
     [LOW_RES] = "Low",
     [HIGH_RES] = "High",
@@ -68,6 +73,7 @@ enum LightMeterSubmenuIndex {
     LightMeterSubmenuIndexDome,
     LightMeterSubmenuIndexBacklight,
     LightMeterSubmenuIndexLuxMeter,
+    LightMeterSubmenuIndexSensorType,
     LightMeterSubmenuIndexMeasurementResolution,
     LightMeterSubmenuIndexHelp,
     LightMeterSubmenuIndexAbout,
@@ -149,7 +155,7 @@ static void measurement_resolution_cb(VariableItem* item) {
     config->measurement_resolution = index;
     lightmeter_app_set_config(app, config);
 
-    lightmeter_app_i2c_init(app);
+    lightmeter_app_i2c_init_sensor(app);
 }
 
 static void device_addr_cb(VariableItem* item) {
@@ -161,8 +167,19 @@ static void device_addr_cb(VariableItem* item) {
     LightMeterConfig* config = app->config;
     config->device_addr = index;
     lightmeter_app_set_config(app, config);
-    
-    lightmeter_app_i2c_init(app);
+
+    lightmeter_app_i2c_init_sensor(app);
+}
+
+static void sensor_type_cb(VariableItem* item) {
+    LightMeterApp* app = variable_item_get_context(item);
+    uint8_t index = variable_item_get_current_value_index(item);
+
+    variable_item_set_current_value_text(item, sensor_type[index]);
+
+    LightMeterConfig* config = app->config;
+    config->sensor_type = index;
+    lightmeter_app_set_config(app, config);
 }
 
 static void ok_cb(void* context, uint32_t index) {
@@ -212,15 +229,24 @@ void lightmeter_scene_config_on_enter(void* context) {
     variable_item_set_current_value_text(item, lux_only[config->lux_only]);
 
     item = variable_item_list_add(
-        var_item_list, "Resolution", COUNT_OF(measurement_resolution), measurement_resolution_cb, app);
+        var_item_list, "Sensor", COUNT_OF(sensor_type), sensor_type_cb, app);
+    variable_item_set_current_value_index(item, config->sensor_type);
+    variable_item_set_current_value_text(item, sensor_type[config->sensor_type]);
+
+    item = variable_item_list_add(
+        var_item_list,
+        "Resolution",
+        COUNT_OF(measurement_resolution),
+        measurement_resolution_cb,
+        app);
     variable_item_set_current_value_index(item, config->measurement_resolution);
-    variable_item_set_current_value_text(item, measurement_resolution[config->measurement_resolution]);
+    variable_item_set_current_value_text(
+        item, measurement_resolution[config->measurement_resolution]);
 
     item = variable_item_list_add(
         var_item_list, "I2C address", COUNT_OF(device_addr), device_addr_cb, app);
     variable_item_set_current_value_index(item, config->device_addr);
     variable_item_set_current_value_text(item, device_addr[config->device_addr]);
-
 
     item = variable_item_list_add(var_item_list, "Help and Pinout", 0, NULL, NULL);
     item = variable_item_list_add(var_item_list, "About", 0, NULL, NULL);

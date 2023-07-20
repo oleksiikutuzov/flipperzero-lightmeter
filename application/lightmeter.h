@@ -21,6 +21,7 @@
 
 #include "lightmeter_config.h"
 #include <BH1750.h>
+#include <MAX44009.h>
 
 #define APP_PATH_DIR "/ext/apps_data/lightmeter"
 #define APP_PATH_CFG "config.txt"
@@ -32,6 +33,7 @@ typedef struct {
     int32_t dome;
     int32_t backlight;
     int32_t lux_only;
+    int32_t sensor_type;
     int32_t measurement_resolution;
     int32_t device_addr;
 } LightMeterConfig;
@@ -67,7 +69,9 @@ typedef enum {
 
 void lightmeter_app_set_config(LightMeterApp* context, LightMeterConfig* config);
 
-void lightmeter_app_i2c_init(LightMeterApp* context);
+void lightmeter_app_i2c_init_sensor(LightMeterApp* context);
+
+void lightmeter_app_i2c_deinit_sensor(LightMeterApp* context);
 
 void lightmeter_app_i2c_callback(LightMeterApp* context);
 

@@ -52,14 +52,15 @@ LightMeterApp* lightmeter_app_alloc(uint32_t first_scene) {
         flipper_format_read_int32(cfg_fmt, "aperture", &app->config->aperture, 1);
         flipper_format_read_int32(cfg_fmt, "dome", &app->config->dome, 1);
         flipper_format_read_int32(cfg_fmt, "backlight", &app->config->backlight, 1);
-        flipper_format_read_int32(cfg_fmt, "measurement_resolution", &app->config->measurement_resolution, 1);
+        flipper_format_read_int32(
+            cfg_fmt, "measurement_resolution", &app->config->measurement_resolution, 1);
         flipper_format_read_int32(cfg_fmt, "lux_only", &app->config->lux_only, 1);
-        flipper_format_read_int32(cfg_fmt, "device_addr", &app->config->device_addr, 1);        
+        flipper_format_read_int32(cfg_fmt, "device_addr", &app->config->device_addr, 1);
     }
     flipper_format_free(cfg_fmt);
 
     // Sensor
-    lightmeter_app_i2c_init(app);
+    lightmeter_app_i2c_init_sensor(app);
 
     // View dispatcher
     app->view_dispatcher = view_dispatcher_alloc();
@@ -165,18 +166,21 @@ void lightmeter_app_set_config(LightMeterApp* context, LightMeterConfig* config)
         flipper_format_write_int32(cfg_fmt, "aperture", &(app->config->aperture), 1);
         flipper_format_write_int32(cfg_fmt, "dome", &(app->config->dome), 1);
         flipper_format_write_int32(cfg_fmt, "backlight", &(app->config->backlight), 1);
-        flipper_format_write_int32(cfg_fmt, "measurement_resolution", &(app->config->measurement_resolution), 1);
+        flipper_format_write_int32(
+            cfg_fmt, "measurement_resolution", &(app->config->measurement_resolution), 1);
         flipper_format_write_int32(cfg_fmt, "lux_only", &(app->config->lux_only), 1);
         flipper_format_write_int32(cfg_fmt, "device_addr", &(app->config->device_addr), 1);
     }
     flipper_format_free(cfg_fmt);
 }
 
-void lightmeter_app_i2c_init(LightMeterApp* context) {
+void lightmeter_app_i2c_init_sensor(LightMeterApp* context) {
     LightMeterApp* app = context;
+    switch(app->config->sensor_type) {
+    case SENSOR_BH1750:
+        bh1750_set_power_state(1);
 
-    bh1750_set_power_state(1);
-    switch(app->config->device_addr) {
+        switch(app->config->device_addr) {
         case ADDR_HIGH:
             bh1750_init_with_addr(0x5C);
             break;
@@ -186,21 +190,32 @@ void lightmeter_app_i2c_init(LightMeterApp* context) {
         default:
             bh1750_init_with_addr(0x23);
             break;
-    }
+        }
 
-    switch(app->config->measurement_resolution) {
-        case LOW_RES:
-            bh1750_set_mode(ONETIME_HIGH_RES_MODE);
-            break;
-        case HIGH_RES:
-            bh1750_set_mode(ONETIME_HIGH_RES_MODE);
-            break;
-        case HIGH_RES2:
-            bh1750_set_mode(ONETIME_HIGH_RES_MODE_2);
-            break;
-        default:
-            bh1750_set_mode(ONETIME_HIGH_RES_MODE);
-            break;
+        bh1750_set_mode(ONETIME_HIGH_RES_MODE);
+
+        break;
+    case SENSOR_MAX44009:
+        max44009_init();
+        break;
+    default:
+        FURI_LOG_E(TAG, "Invalid sensor type %ld", app->config->sensor_type);
+        return;
+    }
+}
+
+void lightmeter_app_i2c_deinit_sensor(LightMeterApp* context) {
+    LightMeterApp* app = context;
+    switch(app->config->sensor_type) {
+    case SENSOR_BH1750:
+        bh1750_set_power_state(0);
+        break;
+    case SENSOR_MAX44009:
+        // nothing
+        break;
+    default:
+        FURI_LOG_E(TAG, "Invalid sensor type %ld", app->config->sensor_type);
+        return;
     }
 }
 
@@ -211,15 +226,17 @@ void lightmeter_app_i2c_callback(LightMeterApp* context) {
     float lux = 0;
     bool response = 0;
 
-    if(bh1750_trigger_manual_conversion() == BH1750_OK) response = 1;
-
-    if(response) {
-        bh1750_read_light(&lux);
-
-        if(main_view_get_dome(app->main_view)) lux *= DOME_COEFFICIENT;
-
-        EV = lux2ev(lux);
+    if(app->config->sensor_type == SENSOR_BH1750) {
+        if(bh1750_trigger_manual_conversion() == BH1750_OK) {
+            bh1750_read_light(&lux);
+            response = 1;
+        }
+    } else if(app->config->sensor_type == SENSOR_MAX44009) {
+        if(max44009_read_light(&lux)) response = 1;
     }
+
+    if(main_view_get_dome(app->main_view)) lux *= DOME_COEFFICIENT;
+    EV = lux2ev(lux);
 
     main_view_set_lux(app->main_view, lux);
     main_view_set_EV(app->main_view, EV);
