@@ -56,6 +56,7 @@ LightMeterApp* lightmeter_app_alloc(uint32_t first_scene) {
             cfg_fmt, "measurement_resolution", &app->config->measurement_resolution, 1);
         flipper_format_read_int32(cfg_fmt, "lux_only", &app->config->lux_only, 1);
         flipper_format_read_int32(cfg_fmt, "device_addr", &app->config->device_addr, 1);
+        flipper_format_read_int32(cfg_fmt, "sensor_type", &app->config->sensor_type, 1);
     }
     flipper_format_free(cfg_fmt);
 
@@ -170,6 +171,7 @@ void lightmeter_app_set_config(LightMeterApp* context, LightMeterConfig* config)
             cfg_fmt, "measurement_resolution", &(app->config->measurement_resolution), 1);
         flipper_format_write_int32(cfg_fmt, "lux_only", &(app->config->lux_only), 1);
         flipper_format_write_int32(cfg_fmt, "device_addr", &(app->config->device_addr), 1);
+        flipper_format_write_int32(cfg_fmt, "sensor_type", &(app->config->sensor_type), 1);
     }
     flipper_format_free(cfg_fmt);
 }
@@ -196,7 +198,17 @@ void lightmeter_app_i2c_init_sensor(LightMeterApp* context) {
 
         break;
     case SENSOR_MAX44009:
-        max44009_init();
+        switch(app->config->device_addr) {
+        case ADDR_HIGH:
+            max44009_init_with_addr(0x4B);
+            break;
+        case ADDR_LOW:
+            max44009_init_with_addr(0x4A);
+            break;
+        default:
+            max44009_init_with_addr(0x4A);
+            break;
+        }
         break;
     default:
         FURI_LOG_E(TAG, "Invalid sensor type %ld", app->config->sensor_type);

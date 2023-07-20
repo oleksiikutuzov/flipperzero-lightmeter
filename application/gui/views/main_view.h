@@ -4,14 +4,14 @@
 #include "lightmeter_icons.h"
 #include "../../lightmeter_config.h"
 
-/* log base 1.4 and 12 pixels cut off 
+/* log base 1.4 and 12 pixels cut off
    makes it show values approx 65-65k
    with reasonable resolution in 1-10k range
    on 20px of screen height  */
 #define LUX_HISTORGRAM_LOGBASE 1.4
 #define LUX_HISTORGRAM_BOTTOM 64 + 12
 
-/* 40 pixels between 45th and 85th 
+/* 40 pixels between 45th and 85th
    between left and right button labels */
 #define LUX_HISTORGRAM_LEFT 45
 #define LUX_HISTORGRAM_LENGTH 40
@@ -43,6 +43,7 @@ typedef struct {
     bool lux_only;
     int measurement_resolution;
     int device_addr;
+    int sensor_type;
 
     float luxHistogram[LUX_HISTORGRAM_LENGTH];
     int luxHistogramIndex;
@@ -89,6 +90,8 @@ void main_view_set_lux_only(MainView* main_view, bool val);
 void main_view_set_measurement_resolution(MainView* main_view, int val);
 
 void main_view_set_device_addr(MainView* main_view, int addr);
+
+void main_view_set_sensor_type(MainView* main_view, int sensor_type);
 
 bool main_view_get_dome(MainView* main_view);
 

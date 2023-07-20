@@ -328,6 +328,12 @@ void main_view_set_device_addr(MainView* main_view, int device_addr) {
         main_view->view, MainViewModel * model, { model->device_addr = device_addr; }, true);
 }
 
+void main_view_set_sensor_type(MainView* main_view, int sensor_type) {
+    furi_assert(main_view);
+    with_view_model(
+        main_view->view, MainViewModel * model, { model->sensor_type = sensor_type; }, true);
+}
+
 bool main_view_get_dome(MainView* main_view) {
     furi_assert(main_view);
     bool val = false;
