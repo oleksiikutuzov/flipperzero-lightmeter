@@ -75,6 +75,7 @@ enum LightMeterSubmenuIndex {
     LightMeterSubmenuIndexLuxMeter,
     LightMeterSubmenuIndexSensorType,
     LightMeterSubmenuIndexMeasurementResolution,
+    LightMeterSubmenuIndexI2CAddress,
     LightMeterSubmenuIndexHelp,
     LightMeterSubmenuIndexAbout,
 };
