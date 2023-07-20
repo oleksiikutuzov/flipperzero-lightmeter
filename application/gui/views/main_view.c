@@ -247,23 +247,23 @@ View* main_view_get_view(MainView* main_view) {
 void main_view_set_lux(MainView* main_view, float val) {
     furi_assert(main_view);
     with_view_model(
-        main_view->view, MainViewModel * model, { 
-            model->lux = val; 
-            model->peakLux = fmax(model->peakLux, val); 
-            
-            model->luxHistogram[ model->luxHistogramIndex++ ] = val;
+        main_view->view,
+        MainViewModel * model,
+        {
+            model->lux = val;
+            model->peakLux = fmax(model->peakLux, val);
+
+            model->luxHistogram[model->luxHistogramIndex++] = val;
             model->luxHistogramIndex %= LUX_HISTORGRAM_LENGTH;
-        }, true);
+        },
+        true);
 }
 
 void main_view_reset_lux(MainView* main_view) {
     furi_assert(main_view);
     with_view_model(
-        main_view->view, MainViewModel * model, { 
-            model->peakLux = 0; 
-        }, true);
+        main_view->view, MainViewModel * model, { model->peakLux = 0; }, true);
 }
-
 
 void main_view_set_EV(MainView* main_view, float val) {
     furi_assert(main_view);
@@ -316,7 +316,10 @@ void main_view_set_lux_only(MainView* main_view, bool lux_only) {
 void main_view_set_measurement_resolution(MainView* main_view, int measurement_resolution) {
     furi_assert(main_view);
     with_view_model(
-        main_view->view, MainViewModel * model, { model->measurement_resolution = measurement_resolution; }, true);
+        main_view->view,
+        MainViewModel * model,
+        { model->measurement_resolution = measurement_resolution; },
+        true);
 }
 
 void main_view_set_device_addr(MainView* main_view, int device_addr) {
@@ -524,14 +527,16 @@ void draw_lux_only_mode(Canvas* canvas, MainViewModel* context) {
         canvas_set_font(canvas, FontSecondary);
         canvas_draw_str_aligned(canvas, 85, 43, AlignLeft, AlignBottom, "Lux peak");
 
-        for (int i=0; i<LUX_HISTORGRAM_LENGTH; i++){
-            float lux = model->luxHistogram[ 
-                (i + model->luxHistogramIndex) % LUX_HISTORGRAM_LENGTH ]; 
+        for(int i = 0; i < LUX_HISTORGRAM_LENGTH; i++) {
+            float lux =
+                model->luxHistogram[(i + model->luxHistogramIndex) % LUX_HISTORGRAM_LENGTH];
             int barHeight = log10(lux) / log10(LUX_HISTORGRAM_LOGBASE);
-            canvas_draw_line(canvas, 
-                LUX_HISTORGRAM_LEFT + i, LUX_HISTORGRAM_BOTTOM, 
-                LUX_HISTORGRAM_LEFT + i, LUX_HISTORGRAM_BOTTOM - barHeight);
+            canvas_draw_line(
+                canvas,
+                LUX_HISTORGRAM_LEFT + i,
+                LUX_HISTORGRAM_BOTTOM,
+                LUX_HISTORGRAM_LEFT + i,
+                LUX_HISTORGRAM_BOTTOM - barHeight);
         }
-
     }
 }

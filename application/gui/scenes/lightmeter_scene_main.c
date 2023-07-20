@@ -40,7 +40,7 @@ bool lightmeter_scene_main_on_event(void* context, SceneManagerEvent event) {
         } else if(event.event == LightMeterAppCustomEventReset) {
             lightmeter_app_reset_callback(app);
             response = true;
-        } 
+        }
         break;
 
     case SceneManagerEventTypeTick:
