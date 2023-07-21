@@ -44,6 +44,7 @@ typedef struct {
     ViewDispatcher* view_dispatcher;
     MainView* main_view;
     VariableItemList* var_item_list;
+    VariableItem* var_item_addr;
     LightMeterConfig* config;
     NotificationApp* notifications;
     Widget* widget;

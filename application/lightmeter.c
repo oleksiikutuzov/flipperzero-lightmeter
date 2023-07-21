@@ -181,7 +181,6 @@ void lightmeter_app_i2c_init_sensor(LightMeterApp* context) {
     switch(app->config->sensor_type) {
     case SENSOR_BH1750:
         bh1750_set_power_state(1);
-
         switch(app->config->device_addr) {
         case ADDR_HIGH:
             bh1750_init_with_addr(0x5C);
@@ -193,9 +192,7 @@ void lightmeter_app_i2c_init_sensor(LightMeterApp* context) {
             bh1750_init_with_addr(0x23);
             break;
         }
-
         bh1750_set_mode(ONETIME_HIGH_RES_MODE);
-
         break;
     case SENSOR_MAX44009:
         switch(app->config->device_addr) {
