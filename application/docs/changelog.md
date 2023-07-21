@@ -3,7 +3,8 @@
 * Lux only screen now has statistics
 * Settings are now stored on SD card
 * You can choose the resolution (BH1750 only) and address for sensor
-  (thanks to @danielskowronski for contributing to this update)
+
+(thanks to @danielskowronski for contributing to this update)
 
 ## v1.1
 
