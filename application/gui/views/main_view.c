@@ -8,7 +8,7 @@
 
 #define WORKER_TAG "Main View"
 
-static const int iso_numbers[] = {
+const int iso_numbers[] = {
     [ISO_6] = 6,
     [ISO_12] = 12,
     [ISO_25] = 25,

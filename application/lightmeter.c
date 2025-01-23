@@ -245,7 +245,7 @@ void lightmeter_app_i2c_callback(LightMeterApp* context) {
     }
 
     if(main_view_get_dome(app->main_view)) lux *= DOME_COEFFICIENT;
-    EV = lux2ev(lux);
+    EV = lux2ev(lux, app->config->iso);
 
     main_view_set_lux(app->main_view, lux);
     main_view_set_EV(app->main_view, EV);
