@@ -2,8 +2,6 @@
 
 [![FAP: Build and lint](https://github.com/oleksiikutuzov/flipperzero-lightmeter/actions/workflows/build-and-lint.yml/badge.svg)](https://github.com/oleksiikutuzov/flipperzero-lightmeter/actions/workflows/build-and-lint.yml)
 
-Download: [![FAP Factory](https://flipc.org/api/v1/oleksiikutuzov/flipperzero-lightmeter/badge?root=application)](https://flipc.org/oleksiikutuzov/flipperzero-lightmeter?root=application)
-
 Repository for source code and hardware files for Lightmeter app for Flipper Zero
 
 <img src="images/framed_gui_main.png" width="500px">
@@ -38,7 +36,8 @@ SDA -> C1
 7. 2x M3x5 screws
 
 ## TODO
-- [ ] Save settings to sd card
+- [x] Save settings to sd card
+- [ ] Support for TSL2561 sensor
 - [ ] Color measurement with TCS34725 sensor
 
 ## References
